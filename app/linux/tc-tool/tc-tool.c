@@ -511,7 +511,7 @@ void slaveinfo(char *ifname)
     uint16 ssigen;
     int expectedWKC;
 
-   printf("Starting slaveinfo\n");
+   printf("Starting tc-tool\n");
 
    /* initialise SOEM, bind socket to ifname */
    if (ec_init(ifname))
@@ -607,7 +607,7 @@ void slaveinfo(char *ifname)
       {
          printf("No slaves found!\n");
       }
-      printf("End slaveinfo, close socket\n");
+      printf("End tc-tool, close socket\n");
       /* stop SOEM, close socket */
       ec_close();
    }
@@ -628,7 +628,7 @@ int main(int argc, char *argv[])
    {
       if ((argc > 2) && (strncmp(argv[2], "-sdo", sizeof("-sdo")) == 0)) printSDO = TRUE;
       if ((argc > 2) && (strncmp(argv[2], "-map", sizeof("-map")) == 0)) printMAP = TRUE;
-      /* start slaveinfo */
+      /* start tc-tool */
       strcpy(ifbuf, argv[1]);
       slaveinfo(ifbuf);
    }
