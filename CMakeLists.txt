@@ -9,6 +9,7 @@ endif()
 
 set(SOEM_INCLUDE_INSTALL_DIR include/soem)
 set(SOEM_LIB_INSTALL_DIR lib)
+set(BUILD_TESTS TRUE)
 
 if(WIN32)
   set(OS "win32")
@@ -41,6 +42,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "rtems")
   message("Building for RTEMS")
   set(OS "rtems")
   set(SOEM_LIB_INSTALL_DIR ${LIB_DIR})
+  set(BUILD_TESTS FALSE)
 endif()
 
 message("OS is ${OS}")
@@ -75,3 +77,8 @@ install(FILES
   DESTINATION ${SOEM_INCLUDE_INSTALL_DIR})
 
 add_subdirectory(app/linux/tc-tool)
+if(BUILD_TESTS) 
+  add_subdirectory(test/linux/slaveinfo)
+  add_subdirectory(test/linux/eepromtool)
+  add_subdirectory(test/linux/simple_test)
+endif()
