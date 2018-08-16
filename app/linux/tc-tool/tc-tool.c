@@ -23,11 +23,12 @@ char IOmap[4096];
 char usdo[128];
 
 void simpletest(char *ifname){
-  int l = 2;
-  int16 *i16;
-  uint16 val = 2;
+  int num_bytes = 0;
+  uint16 write_value = 0x0000;
   uint32 counter = 1e3;
-  uint32 i = 0;
+  volatile uint32 i = 0;
+  volatile float temp = 0.0;
+  volatile int16 read_value = 0;
 
   printf("Starting simple test\n");
 
@@ -42,24 +43,27 @@ void simpletest(char *ifname){
       ec_configdc();
       ec_config_map_group(&IOmap, 0);
       
+      write_value = 2;
+      num_bytes = sizeof(write_value);
       //set channel 1 to pt1000
-      ec_SDOwrite(2, 0x8000, 0x19, FALSE, 2, &val, EC_TIMEOUTSAFE);
+      ec_SDOwrite(2, 0x8000, 0x19, FALSE, num_bytes, &write_value, EC_TIMEOUTSAFE);
 
       //set channel 1 to four-wire mode
-      ec_SDOwrite(2, 0x8000, 0x1a, FALSE, 2, &val, EC_TIMEOUTSAFE);
+      ec_SDOwrite(2, 0x8000, 0x1a, FALSE, num_bytes, &write_value, EC_TIMEOUTSAFE);
 
       //set channel 2 to pt1000
-      ec_SDOwrite(2, 0x8010, 0x19, FALSE, 2, &val, EC_TIMEOUTSAFE);
+      ec_SDOwrite(2, 0x8010, 0x19, FALSE, num_bytes, &write_value, EC_TIMEOUTSAFE);
 
       //set channel 2 to four wire mode
-      ec_SDOwrite(2, 0x8010, 0x1a, FALSE, 2, &val, EC_TIMEOUTSAFE);
+      ec_SDOwrite(2, 0x8010, 0x1a, FALSE, num_bytes, &write_value, EC_TIMEOUTSAFE);
 	  
       printf("tmp: ");
       i = 0;
+      num_bytes = sizeof(read_value);
       while(i < counter){
-        ec_SDOread(2, 0x6010, 0x11, FALSE, &l, &usdo, EC_TIMEOUTRXM);
-        i16 = (int16*) &usdo[0];
-        printf("0x%4.4x %d\n", *i16, *i16);
+        ec_SDOread(2, 0x6010, 0x11, FALSE, &num_bytes, (void*) &read_value, EC_TIMEOUTRXM);
+        temp = read_value / 100.0;
+        printf("0x%4.4x %d %f\n", read_value, read_value, temp);
         i++;
       }
     }
