@@ -17,10 +17,7 @@
 
 #include "ethercat.h"
 
-#define EC_TIMEOUTMON 500
-
 char IOmap[4096];
-char usdo[128];
 
 void simpletest(char *ifname){
   int num_bytes = 0;
@@ -57,13 +54,13 @@ void simpletest(char *ifname){
       //set channel 2 to four wire mode
       ec_SDOwrite(2, 0x8010, 0x1a, FALSE, num_bytes, &write_value, EC_TIMEOUTSAFE);
 	  
-      printf("tmp: ");
+      printf("Temperature: ");
       i = 0;
       num_bytes = sizeof(read_value);
       while(i < counter){
-        ec_SDOread(2, 0x6010, 0x11, FALSE, &num_bytes, (void*) &read_value, EC_TIMEOUTRXM);
+        ec_SDOread(2, 0x6010, 0x11, FALSE, &num_bytes, (void*) &read_value, EC_TIMEOUTSAFE);
         temp = read_value / 100.0;
-        printf("0x%4.4x %d %f\n", read_value, read_value, temp);
+        printf("%2.2f [deg C]\n", temp);
         i++;
       }
     }
